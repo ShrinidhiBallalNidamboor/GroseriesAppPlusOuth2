@@ -83,7 +83,7 @@
                 <%}%>
 
                 <%if(loggedIn==1||loggedIn==0){%>
-                <%if(page!=3&&page!=7&&page!=6){%>
+                <%if(page!=3&&page!=7&&page!=6&&page!=15){%>
                   <li><a href="/shop" role="button">Shop</a>
                   </li>
                 <%}%>
@@ -95,7 +95,7 @@
                       <a href="/register" role="button">Register</a>
                     </li>
                   <%}%>
-                  <%if(page!=4){%>
+                  <%if(page!=4&&page!=15){%>
                     <li>
                       <a href="/register" role="button">Register</a>
                     </li>
@@ -105,7 +105,7 @@
                       <a href="/login" role="button">Login</a>
                     </li>
                   <%}%>
-                  <%if(page!=5){%>
+                  <%if(page!=5&&page!=15){%>
                     <li>
                       <a href="/login" role="button">Login</a>
                     </li>
@@ -337,6 +337,9 @@
 			  <%}%>
 			  <%if(page==14){%>
 				<h1>Order History</h1>
+			  <%}%>
+			  <%if(page==15){%>
+				<h1>Administartive Page</h1>
 			  <%}%>
 						</div>
 					</div>

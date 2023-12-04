@@ -10,9 +10,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const findOrCreate = require('mongoose-findorcreate');
 const axios = require('axios');
-
 const crypto = require('crypto'); // Import NodeJS's Crypto Module
-
 
 class Block { // Our Block Class
   constructor(data, prevHash) {
@@ -81,18 +79,6 @@ async function checkChainValidity(ID) { // Check to see that all the hashes are 
   return true // If all the blocks are valid, return true
 }
 
-
-// // Create two test blocks with some sample data
-// let a = new Block({from: "Joe", to: "Jane"})
-// let b = new Block({from: "Jane", to: "Joe"})
-
-
-// let chain = new BlockChain() // Init our chain
-// chain.addNewBlock(a) // Add block a
-// chain.addNewBlock(b) // Add block b
-// console.log(chain) // Print out the blockchain
-// console.log("Validity: " + chain.checkChainValidity()) // Check our chain for validity
-
 const multer = require("multer");
 const { Decimal128, Double } = require('mongodb');
 var ID;
@@ -102,11 +88,13 @@ var address = 0;
 var msg = true;
 var noPartner = false;
 categories = ["Fruits", "Vegetables", "Home-items", "Sports", "Toys", "Eateries", "Stationary", "Personal-care"]
+
 /*This requires the npm package called the mongoose that as the driver 
 or the intration of the mongoDB with node js.*/
 
 const app = express();
 const cors = require('cors'); // Import the cors middleware
+const { checkServerIdentity } = require('tls');
 
 
 app.use(cors());
@@ -328,10 +316,7 @@ const orderTable = new mongoose.model("orderTable", orderSchema);
 const assignTable = new mongoose.model('assignTable', deliveryAssignSchema);
 var orderDetails = new mongoose.model('orderDetails', orderDetailsSchema);
 var Review = new mongoose.model('ReviewSchema', ReviewSchema);
-var blockchain = new mongoose.model('blockchainSchema', blockchainSchema)
-
-
-
+var blockchain = new mongoose.model('blockchainSchema', blockchainSchema);
 
 /*This creates the session and also create the cookies.*/
 passport.use(User.createStrategy());
@@ -403,6 +388,62 @@ app.get("/", function (req, res) {
   });
 });
 
+app.get("/admin", function (req, res){
+  information_farmer.find({}, function (err, farmer) {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      information_shopkeeper.find({}, function (err, shopkeeper) {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          res.render("admin", { loggedIn: 0, page: 15, shopkeeper:shopkeeper, farmer:farmer});
+        }
+      });
+    }
+  });
+});
+
+app.get("/admin/deletefarmer/:id", async function(req, res) {
+  await User.deleteMany({ _id: req.params.id});
+  await information_farmer.deleteMany({ ID: req.params.id});
+  Product_farmer.find({ ID: req.params.id}, async function(err, product) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      for (let i=0; i<product.length; i=i+1){
+        await farmCart.deleteMany({ ID2: product[i]._id});
+        await orderDetails.deleteMany({ ID2: req.params.id});
+        await Review.deleteMany({ ID2: req.params.id});
+      }
+    }
+  });
+  await Product_farmer.deleteMany({ ID: req.params.id});
+  res.redirect("/admin");
+});
+
+app.get("/admin/deleteshopkeeper/:id", async function(req, res) {
+  await User.deleteMany({ _id: req.params.id});
+  await information_shopkeeper.deleteMany({ ID: req.params.id});
+  Product_shopkeeper.find({ ID: req.params.id}, async function(err, product) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      for (let i=0; i<product.length; i=i+1){
+        await shopCart.deleteMany({ ID2: product[i]._id});
+        await orderDetails.deleteMany({ ID1: req.params.id});
+        await Review.deleteMany({ ID1: req.params.id});
+      }
+    }
+  });
+  await Product_shopkeeper.deleteMany({ ID: req.params.id});
+  res.redirect("/admin");
+});
+
 /*This is the google authentication 
 or using the google authetication 2.0 for saving 
 and authentication of the passwords and the user names.*/
@@ -433,7 +474,6 @@ app.get("/auth/google/secrets",
 
 app.get("/login", function (req, res) {
   if (!(req.isAuthenticated())) {
-
     res.render("login", { loggedIn: 0, page: 5 });
   }
 });
@@ -520,8 +560,6 @@ app.get("/shop", function (req, res) {
     res.redirect("/login");
   }
 });
-
-
 
 app.post("/searchShop", function (req, res) {
   if (req.isAuthenticated()) {
@@ -1370,7 +1408,8 @@ app.get("/deliveryList", async (req, res) => {
       var k = 0, count = 0;
 
       Myorders = await assignTable.find({ ID1: ID });
-
+      console.log(Myorders)
+      
       for (let i = 0; i < ordDetails.length; i++) {
         for (let j = 0; j < ordDetails[i].length; j++) {
           Product_farmer.find({ _id: ordDetails[i][j].ID2 }, function (err, product1) {
@@ -1419,6 +1458,7 @@ app.get("/deliveryList", async (req, res) => {
           });
         }
       }
+      res.redirect("/");
     }
     else {
       res.redirect("/");

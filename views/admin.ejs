@@ -1,0 +1,57 @@
+<%- include('partials/header') %>
+	<!-- cart -->
+	<% if(farmer.length===0 && shopkeeper.length==0) {%>
+		<p></p>
+		<div style="height: 50px;">
+			<h2 style="text-align:center;">There are no users available</h2> 
+		</div>
+		<p></p>
+	<% }else{ %> 
+	<div class="cart-section mt-150 mb-150">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 col-md-12">
+					<div class="cart-table-wrap">
+						<table class="cart-table">
+							<thead class="cart-table-head">
+								<tr class="table-head-row">
+									<th class="product-remove"></th>
+									<th class="product-image">Product Image</th>
+									<th class="product-name">Name</th>
+									<th class="product-price">Role</th>
+									<th class="product-quantity">Phone Number</th>
+								</tr>
+							</thead>
+							<form action="/admin" method="post">
+								<tbody>
+									<%for(let i=0;i!=farmer.length;i++){%>
+									<tr class="table-body-row" style="text-align: center;">
+										<td class="product-remove"><a href="admin/deletefarmer/<%-farmer[i].ID%>"><i class="far fa-window-close"></i></a></td>
+										<td class="product-image"><img src=<%-farmer[i].imagename%> alt=""></td>
+										<td class="product-name"><%-farmer[i].Name%></td>
+										<td class="product-price">Farmer</td>
+										<td class="product-quantity"><%-farmer[i].adhaarNumber%></td>
+									</tr>
+									<%}%>
+								</tbody>
+								<tbody>
+									<%for(let i=0;i!=shopkeeper.length;i++){%>
+									<tr class="table-body-row" style="text-align: center;">
+										<td class="product-remove"><a href="admin/deleteshopkeeper/<%-shopkeeper[i].ID%>"><i class="far fa-window-close"></i></a></td>
+										<td class="product-image"><img src=<%-shopkeeper[i].imagename%> alt=""></td>
+										<td class="product-name"><%-shopkeeper[i].Name%></td>
+										<td class="product-price">Shopkeeper</td>
+										<td class="product-quantity"><%-shopkeeper[i].adhaarNumber%></td>
+									</tr>
+									<%}%>
+								</tbody>
+							</form>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end cart -->
+	<% } %> 
+<%- include('partials/footer') %>
