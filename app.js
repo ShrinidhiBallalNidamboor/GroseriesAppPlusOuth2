@@ -1426,10 +1426,6 @@ app.get("/deliveryList", async (req, res) => {
                     if (farmer[0] != null)
                       products[k++] = [product1[0].ProductName, farmer[0].Name, farmer[0].Address, ordDetails[i][j].ID3];
                   }
-                  if (i == ordDetails.length - 1 && j == ordDetails[i].length - 1) {
-                    console.log(products);
-                    res.render("delivery", { orders: orders, Myorders: Myorders, ordDetails: ordDetails, loggedIn: 4, page: 11, products: products });
-                  }
                 });
               }
             }
@@ -1448,17 +1444,13 @@ app.get("/deliveryList", async (req, res) => {
                     if (shop[0] != null)
                       products[k++] = [product2[0].ProductName, shop[0].Name, shop[0].Address, ordDetails[i][j].ID3];
                   }
-                  if (i == ordDetails.length - 1 && j == ordDetails[i].length - 1) {
-                    console.log(products)
-                    res.render("delivery", { orders: orders, Myorders: Myorders, ordDetails: ordDetails, loggedIn: 4, page: 11, products: products });
-                  }
                 });
               }
             }
           });
         }
       }
-      res.redirect("/");
+      res.render("delivery", { orders: orders, Myorders: Myorders, ordDetails: ordDetails, loggedIn: 4, page: 11, products: products });
     }
     else {
       res.redirect("/");
